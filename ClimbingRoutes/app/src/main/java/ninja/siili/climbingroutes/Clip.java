@@ -83,23 +83,30 @@ public class Clip {
      * @param color Color for the line.
      */
     private void createLine(Clip previousClip, int color) {
-        if (previousClip != null) {
+        mLine = new Node();
+        mLine.setParent(mAnchor);
+        mLine.setRenderable(mRenderableHelper.getColoredLineRenderable(color));
+        moveLine(previousClip);
+    }
+
+
+    /**
+     * Move line alogside Clip.
+     * @param previousClip Previous Clip in Route.
+     */
+    public void moveLine(Clip previousClip) {
+        if (mLine != null && previousClip != null) {
             Vector3 up = new Vector3(0.0f, 1.0f, 0.0f);
             Vector3 directionVector = getDirectionVector(previousClip.getClipNode(), mClip);
 
             float distance = directionVector.length();
             Quaternion rotation = Quaternion.lookRotation(directionVector, up);
 
-            mLine = new Node();
-            mLine.setParent(mAnchor);
-            mLine.setRenderable(mRenderableHelper.getColoredLineRenderable(color));
             mLine.setWorldScale(new Vector3(0.03f, 0.03f, distance));
             mLine.setWorldPosition(mClip.getWorldPosition());
             mLine.setWorldRotation(rotation);
         }
     }
-
-    // TODO move line
 
 
     /**
@@ -119,5 +126,14 @@ public class Clip {
     }
 
 
-    // TODO change clip color
+    /**
+     * Change clip's and line's rederable's color.
+     * @param newColor Integer of the new color.
+     */
+    public void changeColor(int newColor) {
+        mClip.setRenderable(mRenderableHelper.getColoredClipRenderable(newColor));
+        if (mLine != null) {
+            mLine.setRenderable(mRenderableHelper.getColoredLineRenderable(newColor));
+        }
+    }
 }

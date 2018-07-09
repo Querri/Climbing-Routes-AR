@@ -62,7 +62,26 @@ public class Route {
     }
 
 
-    // TODO clip moved
+    /**
+     * Move all lines in Route.
+     */
+    // TODO check what lines need to be moved and leave rest as they are
+    public void moveAllLines() {
+        Clip previousClip = null;
+        for (Clip clip : mClips) {
+            clip.moveLine(previousClip);
+            previousClip = clip;
+        }
+    }
 
-    // TODO change route color
+
+    /**
+     * Change the route's color.
+     */
+    public void changeRouteColor() {
+        for (Clip clip : mClips) {
+            // TODO get color from route info
+            clip.changeColor(mContext.getColor(R.color.red));
+        }
+    }
 }

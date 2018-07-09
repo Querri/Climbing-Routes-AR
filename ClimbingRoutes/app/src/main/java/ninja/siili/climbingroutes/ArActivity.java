@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.ar.core.HitResult;
@@ -141,6 +142,30 @@ public class ArActivity extends AppCompatActivity {
      */
     private void clearRouteSelection() {
         mActiveRoute = null;
+    }
+
+
+    /**
+     * TEST: change route color when the FAB button is clicked.
+     * @param button FAB 1
+     */
+    // TODO automatic color change
+    public void onClickColor(View button) {
+        if (mActiveRoute != null) {
+            mActiveRoute.changeRouteColor();
+        }
+    }
+
+
+    /**
+     * TEST: move all the lines when the FAB button is clicked.
+     * @param button FAB 2
+     */
+    // TODO automatic moving lines
+    public void onClickMove(View button) {
+        if (mActiveRoute != null) {
+            mActiveRoute.moveAllLines();
+        }
     }
 }
 
