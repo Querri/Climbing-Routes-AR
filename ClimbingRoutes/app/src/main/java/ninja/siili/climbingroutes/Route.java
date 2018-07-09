@@ -8,6 +8,9 @@ import com.google.ar.sceneform.ux.TransformationSystem;
 
 import java.util.ArrayList;
 
+/**
+ * Route is an entity that consists of multiple Clips and a RouteInfo.
+ */
 public class Route {
 
     private Context mContext;
@@ -18,6 +21,13 @@ public class Route {
     private ArrayList<Clip> mClips = new ArrayList<>();
 
 
+    /**
+     * Constructor for Route.
+     * @param context App's context.
+     * @param scene ArFragment's Scene.
+     * @param transformationSystem TransformationSystem for TransformableNodes.
+     * @param renderableHelper RenderableHelper to provide correct Renderables.
+     */
     public Route(Context context, Scene scene,
                  TransformationSystem transformationSystem, RenderableHelper renderableHelper) {
         mContext = context;
@@ -37,7 +47,7 @@ public class Route {
     public void addStartingpoint(HitResult hit) {
         // TODO get color from route info
         mClips.add(new Clip(mContext, mScene, hit, mTransformationSystem, mRenderableHelper,
-                true, mContext.getColor(R.color.green)));
+                true, null, mContext.getColor(R.color.green)));
     }
 
 
@@ -48,7 +58,7 @@ public class Route {
     public void addClip(HitResult hit) {
         // TODO get color from route info
         mClips.add(new Clip(mContext, mScene, hit, mTransformationSystem, mRenderableHelper,
-                false, mContext.getColor(R.color.green)));
+                false, mClips.get(mClips.size()-1), mContext.getColor(R.color.green)));
     }
 
 

@@ -4,9 +4,7 @@ import android.content.Context;
 
 import com.google.ar.sceneform.rendering.ModelRenderable;
 
-/**
- * Stores Renderables for clips and lines.
- */
+/** Stores Renderables for clips and lines. */
 public class RenderableHelper {
 
     private Context mContext;
