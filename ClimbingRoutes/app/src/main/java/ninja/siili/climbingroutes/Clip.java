@@ -1,6 +1,7 @@
 package ninja.siili.climbingroutes;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.google.ar.core.HitResult;
 import com.google.ar.sceneform.AnchorNode;
@@ -95,7 +96,7 @@ public class Clip {
      * @param previousClip Previous Clip in Route.
      */
     public void moveLine(Clip previousClip) {
-        if (mLine != null && previousClip != null) {
+        if (mLine != null && mClip != null && previousClip != null ) {
             Vector3 up = new Vector3(0.0f, 1.0f, 0.0f);
             Vector3 directionVector = getDirectionVector(previousClip.getClipNode(), mClip);
 
@@ -106,6 +107,16 @@ public class Clip {
             mLine.setWorldPosition(mClip.getWorldPosition());
             mLine.setWorldRotation(rotation);
         }
+    }
+
+
+    public boolean isClipSelected() {
+        return mClip.isSelected();
+    }
+
+
+    public boolean isClipTransforming() {
+        return mClip.isTransforming();
     }
 
 
@@ -131,7 +142,9 @@ public class Clip {
      * @param newColor Integer of the new color.
      */
     public void changeColor(int newColor) {
-        mClip.setRenderable(mRenderableHelper.getColoredClipRenderable(newColor));
+        if (mClip != null) {
+            mClip.setRenderable(mRenderableHelper.getColoredClipRenderable(newColor));
+        }
         if (mLine != null) {
             mLine.setRenderable(mRenderableHelper.getColoredLineRenderable(newColor));
         }

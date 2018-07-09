@@ -1,6 +1,7 @@
 package ninja.siili.climbingroutes;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.google.ar.core.HitResult;
 import com.google.ar.sceneform.Scene;
@@ -19,6 +20,7 @@ public class Route {
     RenderableHelper mRenderableHelper;
 
     private ArrayList<Clip> mClips = new ArrayList<>();
+    private int mSelectedClipPosition = 0;
 
 
     /**
@@ -63,14 +65,31 @@ public class Route {
 
 
     /**
-     * Move all lines in Route.
+     * Find selected Clip and move the lines adjacent to it.
+     * Recursion <3
      */
-    // TODO check what lines need to be moved and leave rest as they are
-    public void moveAllLines() {
-        Clip previousClip = null;
-        for (Clip clip : mClips) {
-            clip.moveLine(previousClip);
-            previousClip = clip;
+    public void moveLinesIfNeeded() {
+        if (mClips.get(mSelectedClipPosition).isClipSelected()) {
+            // Selected Clip hasn't changed, move lines adjacent to it if the Clip is transforming.
+            if (mClips.get(mSelectedClipPosition).isClipTransforming()) {
+                // Move line below Clip.
+                if (mSelectedClipPosition != 0) {
+                    mClips.get(mSelectedClipPosition).moveLine(mClips.get(mSelectedClipPosition - 1));
+                }
+                // Move line above Clip.
+                if (mSelectedClipPosition != mClips.size()-1) {
+                    mClips.get(mSelectedClipPosition + 1).moveLine(mClips.get(mSelectedClipPosition));
+                }
+            }
+        } else {
+            // Selected Clip has changed, find the new one and do recursion.
+            for (int i = 0; i < mClips.size(); i++) {
+                if (mClips.get(i).isClipSelected()) {
+                    mSelectedClipPosition = i;
+                    moveLinesIfNeeded();
+                    break;
+                }
+            }
         }
     }
 

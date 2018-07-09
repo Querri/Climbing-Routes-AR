@@ -3,14 +3,19 @@ package ninja.siili.climbingroutes;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
+import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.ArSceneView;
+import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
@@ -26,8 +31,11 @@ public class ArActivity extends AppCompatActivity {
     private Scene mScene;
 
     private RenderableHelper mRenderableHelper;
+    private GestureDetector gestureDetector;
 
     private Route mActiveRoute;
+    private boolean addRouteMode = false;
+    private boolean editRouteMode = false;
 
     private boolean hasFinishedLoading = false;
 
@@ -105,6 +113,38 @@ public class ArActivity extends AppCompatActivity {
                         placeClipToActiveRoute(hit);
                     }
                 });
+
+        arFragment.getArSceneView().getScene().setOnUpdateListener(
+                frameTime -> {
+
+                    Frame frame = arFragment.getArSceneView().getArFrame();
+                    if (frame == null) {
+                        return;
+                    }
+
+                    if (frame.getCamera().getTrackingState() != TrackingState.TRACKING) {
+                        return;
+                    }
+
+                    if (mActiveRoute != null && editRouteMode) {
+                        //mActiveRoute.moveLinesIfNeeded();
+                        mActiveRoute.moveLinesIfNeeded();
+                    }
+
+                    arFragment.onUpdate(frameTime);
+                });
+
+
+        // Set a touch listener on the Scene to listen for taps.
+        /*arFragment.getArSceneView().getScene().setOnTouchListener(
+                (HitTestResult hitTestResult, MotionEvent event) -> {
+                    if (mActiveRoute != null) {
+                        Toast.makeText(this, "boop", Toast.LENGTH_SHORT).show();
+                        //mActiveRoute.moveLinesIfNeeded();
+                    }
+
+                    return false;
+                });*/
     }
 
 
@@ -134,6 +174,7 @@ public class ArActivity extends AppCompatActivity {
      */
     private void selectRoute(Route route) {
         mActiveRoute = route;
+        editRouteMode = true;
     }
 
 
@@ -142,6 +183,7 @@ public class ArActivity extends AppCompatActivity {
      */
     private void clearRouteSelection() {
         mActiveRoute = null;
+        editRouteMode = false;
     }
 
 
@@ -158,14 +200,11 @@ public class ArActivity extends AppCompatActivity {
 
 
     /**
-     * TEST: move all the lines when the FAB button is clicked.
+     * FAB button for something.
      * @param button FAB 2
      */
-    // TODO automatic moving lines
     public void onClickMove(View button) {
-        if (mActiveRoute != null) {
-            mActiveRoute.moveAllLines();
-        }
+        // TODO do something else with this FAB
     }
 }
 
