@@ -1,0 +1,41 @@
+{
+   materials: [
+      {
+         name: "color_15277357",
+         parameters: [
+            {
+               baseColor: null,
+            },
+            {
+               baseColorTint: [
+                  0.91000000000000003,
+                  0.11,
+                  0.17999999999999999,
+                  1,
+               ],
+            },
+            {
+               metallic: 1,
+            },
+            {
+               roughness: 1,
+            },
+            {
+               opacity: null,
+            },
+         ],
+         source: "build/sceneform_sdk/default_materials/obj_material.sfm",
+      },
+   ],
+   model: {
+      attributes: [
+         "Position",
+         "Orientation",
+      ],
+      collision: {},
+      file: "sampledata/models/sphere_red/sphere_red.obj",
+      name: "sphere_red",
+      scale: 0.5,
+   },
+   version: "0.51:1",
+}

@@ -1,0 +1,84 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "ninja.siili.climbingroutes"
+        minSdkVersion 24
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        ndk {
+            /*
+             * Sceneform is available for the following ABIs: arm64-v8a, armv7a,
+             * x86_64 and x86. This sample app enables arm64-v8a to run on
+             * devices and x86 to run on the emulator. Your application should
+             * list the ABIs most appropriate to minimize APK size (arm64-v8a recommended).
+             */
+            abiFilters 'arm64-v8a','x86'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation "com.android.support:appcompat-v7:27.1.1"
+    implementation "com.android.support:design:27.1.1"
+
+    implementation "com.google.ar.sceneform:core:1.3.0"
+    implementation "com.google.ar.sceneform.ux:sceneform-ux:1.3.0"
+}
+
+apply plugin: 'com.google.ar.sceneform.plugin'
+
+sceneform.asset('sampledata/models/cylinder_green/cylinder_green.obj',
+        'default',
+        'sampledata/models/cylinder_green/cylinder_green.sfa',
+        'src/main/assets/cylinder_green')
+
+sceneform.asset('sampledata/models/cylinder_orange/cylinder_orange.obj',
+        'default',
+        'sampledata/models/cylinder_orange/cylinder_orange.sfa',
+        'src/main/assets/cylinder_orange')
+
+sceneform.asset('sampledata/models/cylinder_red/cylinder_red.obj',
+        'default',
+        'sampledata/models/cylinder_red/cylinder_red.sfa',
+        'src/main/assets/cylinder_red')
+
+sceneform.asset('sampledata/models/cylinder_yellow/cylinder_yellow.obj',
+        'default',
+        'sampledata/models/cylinder_yellow/cylinder_yellow.sfa',
+        'src/main/assets/cylinder_yellow')
+
+sceneform.asset('sampledata/models/sphere_red/sphere_red.obj',
+        'default',
+        'sampledata/models/sphere_red/sphere_red.sfa',
+        'src/main/assets/sphere_red')
+
+sceneform.asset('sampledata/models/sphere_green/sphere_green.obj',
+        'default',
+        'sampledata/models/sphere_green/sphere_green.sfa',
+        'src/main/assets/sphere_green')
+
+sceneform.asset('sampledata/models/sphere_orange/sphere_orange.obj',
+        'default',
+        'sampledata/models/sphere_orange/sphere_orange.sfa',
+        'src/main/assets/sphere_orange')
+
+sceneform.asset('sampledata/models/sphere_yellow/sphere_yellow.obj',
+        'default',
+        'sampledata/models/sphere_yellow/sphere_yellow.sfa',
+        'src/main/assets/sphere_yellow')

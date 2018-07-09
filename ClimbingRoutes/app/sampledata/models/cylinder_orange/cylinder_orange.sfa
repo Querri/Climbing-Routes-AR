@@ -1,0 +1,53 @@
+{
+   materials: [
+      {
+         name: "color_4634441",
+         parameters: [
+            {
+               baseColor: null,
+            },
+            {
+               baseColorTint: [
+                  0.95999999999999996,
+                  0.51000000000000001,
+                  0.12,
+                  1,
+               ],
+            },
+            {
+               metallic: 1,
+            },
+            {
+               roughness: 1,
+            },
+            {
+               opacity: null,
+            },
+         ],
+         source: "build/sceneform_sdk/default_materials/obj_material.sfm",
+      },
+   ],
+   model: {
+      attributes: [
+         "Position",
+         "Orientation",
+      ],
+      file: "sampledata/models/cylinder_orange/cylinder_orange.obj",
+      name: "cylinder_orange",
+      scale: 0.050000000000000003,
+      suggested_collision: {
+         center: {
+            x: 0,
+            y: 0,
+            z: 0,
+         },
+         size: {
+            x: 1,
+            y: 1,
+            z: 1,
+         },
+         type: "Box",
+      },
+   },
+   version: "0.51:1",
+}

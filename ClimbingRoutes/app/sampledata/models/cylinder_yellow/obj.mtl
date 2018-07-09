@@ -1,0 +1,10 @@
+# Color definition for Tinkercad Obj File 2015
+
+newmtl color_4634441
+
+illum 2
+
+Ka 1.00 0.86 0.10
+Kd 1.00 0.86 0.10
+Tf 1.00 0.86 0.10
+Ni 1.00
