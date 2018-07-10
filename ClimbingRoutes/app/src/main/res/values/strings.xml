@@ -3,4 +3,14 @@
 
     <!-- Route Info -->
     <string name="route_name">Name of the route</string>
+    <string name="route_diff">Route difficulty</string>
+    <string name="route_type">Route type</string>
+    <string name="route_type_boulder">Boulder</string>
+    <string name="route_type_sport">Sport</string>
+    <string name="route_type_trad">Traditional</string>
+    <string name="route_start_onehold">One hold</string>
+    <string name="route_start_twoholds">Two holds</string>
+    <string name="route_start_assis">Sitstart</string>
+    <string name="route_topout">Top out</string>
+    <string name="route_notes">Notes</string>
 </resources>

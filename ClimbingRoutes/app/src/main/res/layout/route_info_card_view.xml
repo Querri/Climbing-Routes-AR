@@ -3,25 +3,113 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/settingsview"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/rounded_bg"
     android:clipChildren="false"
     android:clipToPadding="false">
 
 
-    <!-- route's name -->
+    <!-- name -->
     <TextView
         android:id="@+id/tv_routeName"
-        android:layout_width="match_parent"
-        android:layout_height="22dp"
-        android:layout_margin="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="14dp"
+        android:text="testinimi"
+        android:textAllCaps="true"
         android:textColor="@color/white"
-        android:text="@string/route_name"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_routeDiff"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- type -->
+    <TextView
+        android:id="@+id/tv_routeType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="boulder"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/tv_routeDiff"
+        app:layout_constraintStart_toStartOf="@+id/tv_routeDiff"
+        app:layout_constraintTop_toBottomOf="@+id/tv_routeDiff" />
+
+
+    <!-- difficulty -->
+    <TextView
+        android:id="@+id/tv_routeDiff"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_marginEnd="8dp"
+        android:text="6b+"
+        android:textSize="70sp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!-- one/two hold start -->
+    <TextView
+        android:id="@+id/tv_sitstart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="SIT"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/et_routeNotes"
+        app:layout_constraintEnd_toStartOf="@+id/tv_start_hold"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_routeName" />
+
+    <!-- sitstart -->
+    <TextView
+        android:id="@+id/tv_start_hold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="HOLD"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/et_routeNotes"
+        app:layout_constraintEnd_toStartOf="@+id/tv_topout"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tv_sitstart"
+        app:layout_constraintTop_toBottomOf="@+id/tv_routeName" />
+
+    <!-- topout -->
+    <TextView
+        android:id="@+id/tv_topout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="TOP"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/et_routeNotes"
+        app:layout_constraintEnd_toStartOf="@+id/tv_routeDiff"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tv_start_hold"
+        app:layout_constraintTop_toBottomOf="@+id/tv_routeName" />
+
+
+    <!-- additional notes -->
+    <TextView
+        android:id="@+id/et_routeNotes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_routeType" />
 
 </android.support.constraint.ConstraintLayout>

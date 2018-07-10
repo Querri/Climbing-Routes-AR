@@ -17,7 +17,6 @@ import com.google.ar.sceneform.ux.TransformationSystem;
  *  rest of the clips have a single line attached to them.
  */
 public class Clip {
-    private Context mContext;
     private TransformationSystem mTransformationSystem;
     private RenderableHelper mRenderableHelper;
 
@@ -80,7 +79,7 @@ public class Clip {
             mInfoCard = new Node();
             mInfoCard.setParent(mClip);
             mInfoCard.setLocalPosition(new Vector3(0.0f, 1.5f, 0.0f));
-            mInfoCard.setWorldScale(new Vector3(3.0f, 3.0f, 3.0f));
+            mInfoCard.setLocalScale(new Vector3(4.0f, 4.0f, 4.0f));
 
             Quaternion cameraRotation = mRenderableHelper.getScene().getCamera().getWorldRotation();
             mInfoCard.setWorldRotation(cameraRotation);
