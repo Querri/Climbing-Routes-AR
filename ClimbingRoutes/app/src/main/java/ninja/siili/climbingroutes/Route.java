@@ -20,19 +20,22 @@ public class Route {
     private ArrayList<Clip> mClips = new ArrayList<>();
     private int mSelectedClipPosition = 0;
 
+    private RouteInfo mRouteInfo;
+
 
     /**
      * Constructor for Route.
      * @param context App's context.
-     * @param scene ArFragment's Scene.
      * @param transformationSystem TransformationSystem for TransformableNodes.
      * @param renderableHelper RenderableHelper to provide correct Renderables.
      */
-    public Route(Context context, Scene scene,
+    public Route(Context context,
                  TransformationSystem transformationSystem, RenderableHelper renderableHelper) {
         mContext = context;
         mTransformationSystem = transformationSystem;
         mRenderableHelper = renderableHelper;
+
+        mRouteInfo = new RouteInfo(context);
 
         // TODO create object for storing route info
     }
@@ -50,9 +53,8 @@ public class Route {
             previousClip = mClips.get(mClips.size()-1);
         }
 
-        // TODO get color from route info
         mClips.add(new Clip(mTransformationSystem, mRenderableHelper, hit,
-                mContext.getColor(R.color.green), previousClip));
+                mRouteInfo.getDifficultyColor(), previousClip));
     }
 
 
@@ -91,8 +93,41 @@ public class Route {
      */
     public void changeRouteColor() {
         for (Clip clip : mClips) {
-            // TODO get color from route info
-            clip.changeColor(mContext.getColor(R.color.red));
+            clip.changeColor(mRouteInfo.getDifficultyColor());
         }
+    }
+
+
+    /**
+     * Update Route info.
+     * @param name String of new name.
+     * @param difficulty Integer of new difficulty.
+     * @param isBoulder True if Route's type is boulder.
+     * @param isSport True if Route's type is sport.
+     * @param isTrad True if Route's type is trad.
+     * @param isSitstart True if Route has a sit start.
+     * @param isTopOut True if Route has a top out.
+     * @param startHoldCount Integer of Route's start hold count, from 0 to 2.
+     * @param notes String of additional notes about the Route.
+     */
+    public void updateRouteInfo(String name, int difficulty,
+                                boolean isBoulder, boolean isSport, boolean isTrad,
+                                boolean isSitstart, boolean isTopOut, int startHoldCount,
+                                String notes) {
+        mRouteInfo.setName(name);
+        mRouteInfo.setDifficulty(difficulty);
+        mRouteInfo.setIsBoulder(isBoulder);
+        mRouteInfo.setIsSport(isSport);
+        mRouteInfo.setIsTrad(isTrad);
+        mRouteInfo.setIsSitstart(isSitstart);
+        mRouteInfo.setIsTopout(isTopOut);
+        mRouteInfo.setStartHoldCount(startHoldCount);
+        mRouteInfo.setNotes(notes);
+
+        // TODO check this
+        boolean valuesFine = mRouteInfo.checkValuesAreAllRight();
+
+        // TODO listener for this
+        changeRouteColor();
     }
 }

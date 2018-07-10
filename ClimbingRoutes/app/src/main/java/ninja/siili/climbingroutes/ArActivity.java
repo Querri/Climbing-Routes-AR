@@ -1,11 +1,16 @@
 package ninja.siili.climbingroutes;
 
 import android.net.Uri;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.google.ar.core.Frame;
@@ -35,12 +40,17 @@ public class ArActivity extends AppCompatActivity {
     private boolean addRouteMode = true;
     private boolean editRouteMode = false;
 
+
+    private ConstraintLayout mInfoView;
+
     private boolean hasFinishedLoading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ar);
+        mInfoView = findViewById(R.id.include);
+        mInfoView.setVisibility(View.GONE);
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         mScene = arFragment.getArSceneView().getScene();
@@ -92,24 +102,9 @@ public class ArActivity extends AppCompatActivity {
 
                     return null;
                 });
-
-        // Listener for taps on AR Planes.
-        // TODO change to Points
-        /*arFragment.setOnTapArPlaneListener(
-                (HitResult hit, Plane plane, MotionEvent motionEvent) -> {
-                    if (!hasFinishedLoading) {
-                        return;
-                    }
-
-                    if (mActiveRoute == null) {
-                        placeNewRoute(hit);
-                    } else {
-                        placeClipToActiveRoute(hit);
-                    }
-                });*/
         
 
-        // For updating lines when needed.
+        // Update listener for moving lines.
         arFragment.getArSceneView().getScene().setOnUpdateListener(
                 frameTime -> {
 
@@ -131,7 +126,7 @@ public class ArActivity extends AppCompatActivity {
                 });
 
 
-        // Set up a tap gesture detector.
+        // Gesture detector.
         gestureDetector = new GestureDetector
                 (this, new GestureDetector.SimpleOnGestureListener() {
                     @Override
@@ -147,7 +142,7 @@ public class ArActivity extends AppCompatActivity {
                 });
 
         
-        // Listener
+        // Touch listener
         arFragment.getArSceneView().getScene().setOnTouchListener(
                 (HitTestResult hitTestResult, MotionEvent event) -> {
                     if (addRouteMode || editRouteMode) {
@@ -183,7 +178,7 @@ public class ArActivity extends AppCompatActivity {
             for (HitResult hit : frame.hitTest(tap)) {
                 Trackable trackable = hit.getTrackable();
                 if (trackable instanceof Point) {
-                    Route newRoute = new Route(this, mScene, arFragment.getTransformationSystem(), mRenderableHelper);
+                    Route newRoute = new Route(this, arFragment.getTransformationSystem(), mRenderableHelper);
                     newRoute.addClip(hit);
                     selectRoute(newRoute);
                     return true;
@@ -207,25 +202,6 @@ public class ArActivity extends AppCompatActivity {
     }
 
 
-
-    /* Place a new Route.
-     * @param hit HitResult for the spot the user tapped.
-     *
-    private void placeNewRoute(HitResult hit) {
-        Route newRoute = new Route(this, mScene, arFragment.getTransformationSystem(), mRenderableHelper);
-        newRoute.addStartingpoint(hit);
-        selectRoute(newRoute);
-    }
-
-    **
-     * Place a new clip to the active route.
-     * @param hit HitResult for the spot the user tapped.
-     *
-    private void placeClipToActiveRoute(HitResult hit) {
-        mActiveRoute.addClip(hit);
-    }*/
-
-
     /**
      * Select a new active route.
      * @param route Selected route.
@@ -246,13 +222,46 @@ public class ArActivity extends AppCompatActivity {
 
 
     /**
-     * TEST: change route color when the FAB button is clicked.
+     *
+     */
+    private void saveRouteInfo() {
+
+    }
+
+
+    /**
+     * Toggle Info View's visibility.
      * @param button FAB 1
      */
-    // TODO automatic color change
-    public void onClickColor(View button) {
+    public void onClickToggleInfoView(View button) {
         if (mActiveRoute != null) {
-            mActiveRoute.changeRouteColor();
+            if (mInfoView.getVisibility() == View.GONE) {
+                mInfoView.setVisibility(View.VISIBLE);
+            } else {
+                mInfoView.setVisibility(View.GONE);
+                saveRouteInfo();
+
+                EditText name = mInfoView.findViewById(R.id.name);
+                SeekBar diff = mInfoView.findViewById(R.id.diff_seekbar);
+                RadioButton boulder = mInfoView.findViewById(R.id.boulder);
+                RadioButton sport = mInfoView.findViewById(R.id.sport);
+                RadioButton trad = mInfoView.findViewById(R.id.trad);
+                CheckBox sitstart = mInfoView.findViewById(R.id.sitstart);
+                CheckBox topout = mInfoView.findViewById(R.id.topout);
+                EditText notes = mInfoView.findViewById(R.id.notes);
+
+                mActiveRoute.updateRouteInfo(
+                        name.getText().toString(),
+                        diff.getProgress(),
+                        boulder.isChecked(),
+                        sport.isChecked(),
+                        trad.isChecked(),
+                        sitstart.isChecked(),
+                        topout.isChecked(),
+                        0,
+                        notes.getText().toString()
+                        );
+            }
         }
     }
 
