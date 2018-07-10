@@ -6,7 +6,6 @@ import android.widget.Toast;
 import com.google.ar.core.HitResult;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.Node;
-import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ViewRenderable;
@@ -25,32 +24,25 @@ public class Clip {
     private AnchorNode mAnchor;
     private TransformableNode mClip;
     private Node mLine;
-
-    private boolean isStartClip;
+    private Node mInfoCard;
 
 
     /**
-     * Constructor for Clip.
-     * @param context App's context.
-     * @param scene ArFragment's Scene.
+     * Constructor for the Clip.
+     * @param transformationSystem TransformationSystem for Trasformable Nodes.
+     * @param renderableHelper RenderableHelper class to help with Renderables.
      * @param hit HitResult for the spot the user tapped.
-     * @param transformationSystem TransformationSystem for TransformableNodes.
-     * @param renderableHelper RenderableHelper to provide correct Renderables.
-     * @param isStartClip If Clip is the first in on Route.
-     * @param previousClip Previous Clip in Route.
      * @param color Integer of the Route's color.
+     * @param previousClip Route's previous Clip, null if this is the first one.
      */
-    public Clip(Context context, Scene scene, HitResult hit,
-                TransformationSystem transformationSystem, RenderableHelper renderableHelper,
-                boolean isStartClip, Clip previousClip, int color) {
-        mContext = context;
+    public Clip(TransformationSystem transformationSystem, RenderableHelper renderableHelper,
+                HitResult hit, int color, Clip previousClip) {
         mTransformationSystem = transformationSystem;
         mRenderableHelper = renderableHelper;
-        this.isStartClip = isStartClip;
 
         // Create anchor node.
         mAnchor = new AnchorNode(hit.createAnchor());
-        mAnchor.setParent(scene);
+        mAnchor.setParent(mRenderableHelper.getScene());
 
         // Create a transformable node and add it to the anchor.
         mClip = new TransformableNode(mTransformationSystem);
@@ -61,8 +53,9 @@ public class Clip {
         mClip.getScaleController().setMinScale(0.1f);
         mClip.getScaleController().setMaxScale(0.3f);
 
-        if (isStartClip) {
-            // TODO create info card
+        // If no previous clip, create info card instead of a line.
+        if (previousClip == null) {
+            createInfoCard();
         } else {
             createLine(previousClip, color);
         }
@@ -75,6 +68,36 @@ public class Clip {
      */
     private TransformableNode getClipNode() {
         return mClip;
+    }
+
+
+    /**
+     * Create info card ViewRenderable for the first Clip on Route.
+     */
+    private void createInfoCard() {
+        Toast.makeText(mRenderableHelper.getContext(), "make info card", Toast.LENGTH_SHORT).show();
+        if (mInfoCard == null && mClip != null) {
+            mInfoCard = new Node();
+            mInfoCard.setParent(mClip);
+            mInfoCard.setLocalPosition(new Vector3(0.0f, 1.5f, 0.0f));
+            mInfoCard.setWorldScale(new Vector3(3.0f, 3.0f, 3.0f));
+
+            Quaternion cameraRotation = mRenderableHelper.getScene().getCamera().getWorldRotation();
+            mInfoCard.setWorldRotation(cameraRotation);
+
+            // Build ViewRenderable.
+            ViewRenderable.builder()
+                    .setView(mRenderableHelper.getContext(), R.layout.route_info_card_view)
+                    .build()
+                    .thenAccept(
+                            (renderable) -> {
+                                mInfoCard.setRenderable(renderable);
+                            })
+                    .exceptionally(
+                            (throwable) -> {
+                                throw new AssertionError("Could not load card view.", throwable);
+                            });
+        }
     }
 
 

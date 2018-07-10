@@ -2,12 +2,14 @@ package ninja.siili.climbingroutes;
 
 import android.content.Context;
 
+import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 
 /** Stores Renderables for clips and lines. */
 public class RenderableHelper {
 
     private Context mContext;
+    private Scene mScene;
 
     private ModelRenderable mClipRenderableGreen;
     private ModelRenderable mClipRenderableYellow;
@@ -19,12 +21,13 @@ public class RenderableHelper {
     private ModelRenderable mLineRenderableRed;
 
 
-    public RenderableHelper(Context context,
+    public RenderableHelper(Context context, Scene scene,
                             ModelRenderable greenclip, ModelRenderable yellowclip,
                             ModelRenderable orangeclip, ModelRenderable redclip,
                             ModelRenderable greenline, ModelRenderable yellowline,
                             ModelRenderable orangeline, ModelRenderable redline) {
         mContext = context;
+        mScene = scene;
         mClipRenderableGreen = greenclip;
         mClipRenderableYellow = yellowclip;
         mClipRenderableOrange = orangeclip;
@@ -33,6 +36,24 @@ public class RenderableHelper {
         mLineRenderableYellow = yellowline;
         mLineRenderableOrange = orangeline;
         mLineRenderableRed = redline;
+    }
+
+
+    /**
+     * Pass Context to Clip.
+     * @return Context of the app:
+     */
+    public Context getContext() {
+        return mContext;
+    }
+
+
+    /**
+     * Pass Scene to Clip.
+     * @return Scene.
+     */
+    public Scene getScene() {
+        return mScene;
     }
 
 

@@ -3,18 +3,16 @@ package ninja.siili.climbingroutes;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
-import com.google.ar.core.Plane;
+import com.google.ar.core.Point;
+import com.google.ar.core.Trackable;
 import com.google.ar.core.TrackingState;
-import com.google.ar.sceneform.ArSceneView;
 import com.google.ar.sceneform.HitTestResult;
 import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.rendering.ModelRenderable;
@@ -34,7 +32,7 @@ public class ArActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
 
     private Route mActiveRoute;
-    private boolean addRouteMode = false;
+    private boolean addRouteMode = true;
     private boolean editRouteMode = false;
 
     private boolean hasFinishedLoading = false;
@@ -83,7 +81,7 @@ public class ArActivity extends AppCompatActivity {
 
                     try {
                         // Helper handles renderables from now on.
-                        mRenderableHelper = new RenderableHelper(this,
+                        mRenderableHelper = new RenderableHelper(this, mScene,
                                 clipStageGreen.get(), clipStageYellow.get(), clipStageOrange.get(), clipStageRed.get(),
                                 lineStageGreen.get(), lineStageYellow.get(), lineStageOrange.get(), lineStageRed.get());
                         hasFinishedLoading = true;
@@ -97,13 +95,9 @@ public class ArActivity extends AppCompatActivity {
 
         // Listener for taps on AR Planes.
         // TODO change to Points
-        arFragment.setOnTapArPlaneListener(
+        /*arFragment.setOnTapArPlaneListener(
                 (HitResult hit, Plane plane, MotionEvent motionEvent) -> {
                     if (!hasFinishedLoading) {
-                        return;
-                    }
-
-                    if (plane.getType() != Plane.Type.HORIZONTAL_UPWARD_FACING) {
                         return;
                     }
 
@@ -112,8 +106,10 @@ public class ArActivity extends AppCompatActivity {
                     } else {
                         placeClipToActiveRoute(hit);
                     }
-                });
+                });*/
+        
 
+        // For updating lines when needed.
         arFragment.getArSceneView().getScene().setOnUpdateListener(
                 frameTime -> {
 
@@ -127,7 +123,7 @@ public class ArActivity extends AppCompatActivity {
                     }
 
                     if (mActiveRoute != null && editRouteMode) {
-                        //mActiveRoute.moveLinesIfNeeded();
+                        // TODO do this only when there is touch event?
                         mActiveRoute.moveLinesIfNeeded();
                     }
 
@@ -135,37 +131,99 @@ public class ArActivity extends AppCompatActivity {
                 });
 
 
-        // Set a touch listener on the Scene to listen for taps.
-        /*arFragment.getArSceneView().getScene().setOnTouchListener(
+        // Set up a tap gesture detector.
+        gestureDetector = new GestureDetector
+                (this, new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public boolean onSingleTapUp(MotionEvent e) {
+                        onSingleTap(e);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onDown(MotionEvent e) {
+                        return true;
+                    }
+                });
+
+        
+        // Listener
+        arFragment.getArSceneView().getScene().setOnTouchListener(
                 (HitTestResult hitTestResult, MotionEvent event) -> {
-                    if (mActiveRoute != null) {
-                        Toast.makeText(this, "boop", Toast.LENGTH_SHORT).show();
-                        //mActiveRoute.moveLinesIfNeeded();
+                    if (addRouteMode || editRouteMode) {
+                        return gestureDetector.onTouchEvent(event);
                     }
 
                     return false;
-                });*/
+                }
+        );
+    }
+    
+    
+    private void onSingleTap(MotionEvent tap) {
+        Frame frame = arFragment.getArSceneView().getArFrame();
+        if (frame != null) {
+            if (mActiveRoute == null) {
+                if (tryPlaceNewRoute(tap, frame)) {
+                    addRouteMode = false;
+                    editRouteMode = true;
+                }
+            } else {
+                if (editRouteMode) {
+                    tryPlaceClip(tap, frame);
+                }
+            }
+        }
     }
 
 
-    /**
-     * Place a new Route.
+    private boolean tryPlaceNewRoute(MotionEvent tap, Frame frame) {
+        if (tap != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING) {
+            Toast.makeText(this, "try place route", Toast.LENGTH_SHORT).show();
+            for (HitResult hit : frame.hitTest(tap)) {
+                Trackable trackable = hit.getTrackable();
+                if (trackable instanceof Point) {
+                    Route newRoute = new Route(this, mScene, arFragment.getTransformationSystem(), mRenderableHelper);
+                    newRoute.addClip(hit);
+                    selectRoute(newRoute);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    private void tryPlaceClip(MotionEvent tap, Frame frame) {
+        if (tap != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING) {
+            Toast.makeText(this, "try place clip", Toast.LENGTH_SHORT).show();
+            for (HitResult hit : frame.hitTest(tap)) {
+                Trackable trackable = hit.getTrackable();
+                if (trackable instanceof Point) {
+                    mActiveRoute.addClip(hit);
+                }
+            }
+        }
+    }
+
+
+
+    /* Place a new Route.
      * @param hit HitResult for the spot the user tapped.
-     */
+     *
     private void placeNewRoute(HitResult hit) {
         Route newRoute = new Route(this, mScene, arFragment.getTransformationSystem(), mRenderableHelper);
         newRoute.addStartingpoint(hit);
         selectRoute(newRoute);
     }
 
-
-    /**
+    **
      * Place a new clip to the active route.
      * @param hit HitResult for the spot the user tapped.
-     */
+     *
     private void placeClipToActiveRoute(HitResult hit) {
         mActiveRoute.addClip(hit);
-    }
+    }*/
 
 
     /**

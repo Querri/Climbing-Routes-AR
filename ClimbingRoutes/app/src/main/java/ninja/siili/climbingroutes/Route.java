@@ -1,7 +1,6 @@
 package ninja.siili.climbingroutes;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.google.ar.core.HitResult;
 import com.google.ar.sceneform.Scene;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 public class Route {
 
     private Context mContext;
-    private Scene mScene;
     TransformationSystem mTransformationSystem;
     RenderableHelper mRenderableHelper;
 
@@ -33,23 +31,10 @@ public class Route {
     public Route(Context context, Scene scene,
                  TransformationSystem transformationSystem, RenderableHelper renderableHelper) {
         mContext = context;
-        mScene = scene;
         mTransformationSystem = transformationSystem;
         mRenderableHelper = renderableHelper;
 
         // TODO create object for storing route info
-    }
-
-
-
-    /**
-     * Add a starting point for the route. Has the Node for RouteInfo as a child.
-     * @param hit HitResult for the spot the user tapped.
-     */
-    public void addStartingpoint(HitResult hit) {
-        // TODO get color from route info
-        mClips.add(new Clip(mContext, mScene, hit, mTransformationSystem, mRenderableHelper,
-                true, null, mContext.getColor(R.color.green)));
     }
 
 
@@ -58,9 +43,16 @@ public class Route {
      * @param hit HitResult for the spot the user tapped.
      */
     public void addClip(HitResult hit) {
+
+        // If no previous clip, pass null.
+        Clip previousClip = null;
+        if (mClips.size() > 0) {
+            previousClip = mClips.get(mClips.size()-1);
+        }
+
         // TODO get color from route info
-        mClips.add(new Clip(mContext, mScene, hit, mTransformationSystem, mRenderableHelper,
-                false, mClips.get(mClips.size()-1), mContext.getColor(R.color.green)));
+        mClips.add(new Clip(mTransformationSystem, mRenderableHelper, hit,
+                mContext.getColor(R.color.green), previousClip));
     }
 
 

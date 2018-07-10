@@ -4,6 +4,11 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <!-- info card -->
+    <color name="dark_grey">#202020</color>
+    <color name="grey">@android:color/darker_gray</color>
+    <color name="white">@android:color/white</color>
+
     <!-- Colors for routes. -->
     <color name="green">#46b749</color>
     <color name="yellow">#ffdd1a</color>
