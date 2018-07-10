@@ -1,6 +1,6 @@
 package ninja.siili.climbingroutes;
 
-import android.content.Context;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.ar.core.HitResult;
@@ -17,13 +17,13 @@ import com.google.ar.sceneform.ux.TransformationSystem;
  *  rest of the clips have a single line attached to them.
  */
 public class Clip {
-    private TransformationSystem mTransformationSystem;
     private RenderableHelper mRenderableHelper;
 
     private AnchorNode mAnchor;
     private TransformableNode mClip;
     private Node mLine;
     private Node mInfoCard;
+    private View mInfoCardView;
 
 
     /**
@@ -36,7 +36,6 @@ public class Clip {
      */
     public Clip(TransformationSystem transformationSystem, RenderableHelper renderableHelper,
                 HitResult hit, int color, Clip previousClip) {
-        mTransformationSystem = transformationSystem;
         mRenderableHelper = renderableHelper;
 
         // Create anchor node.
@@ -44,7 +43,7 @@ public class Clip {
         mAnchor.setParent(mRenderableHelper.getScene());
 
         // Create a transformable node and add it to the anchor.
-        mClip = new TransformableNode(mTransformationSystem);
+        mClip = new TransformableNode(transformationSystem);
         mClip.setParent(mAnchor);
         mClip.setRenderable(mRenderableHelper.getColoredClipRenderable(color));
         mClip.select();
@@ -62,15 +61,6 @@ public class Clip {
 
 
     /**
-     * Get Clip's Node.
-     * @return TransformableNode of the clip.
-     */
-    private TransformableNode getClipNode() {
-        return mClip;
-    }
-
-
-    /**
      * Create info card ViewRenderable for the first Clip on Route.
      */
     private void createInfoCard() {
@@ -80,9 +70,7 @@ public class Clip {
             mInfoCard.setParent(mClip);
             mInfoCard.setLocalPosition(new Vector3(0.0f, 1.5f, 0.0f));
             mInfoCard.setLocalScale(new Vector3(4.0f, 4.0f, 4.0f));
-
-            Quaternion cameraRotation = mRenderableHelper.getScene().getCamera().getWorldRotation();
-            mInfoCard.setWorldRotation(cameraRotation);
+            mInfoCard.setWorldRotation(mRenderableHelper.getScene().getCamera().getWorldRotation());
 
             // Build ViewRenderable.
             ViewRenderable.builder()
@@ -91,6 +79,7 @@ public class Clip {
                     .thenAccept(
                             (renderable) -> {
                                 mInfoCard.setRenderable(renderable);
+                                mInfoCardView = renderable.getView();
                             })
                     .exceptionally(
                             (throwable) -> {
@@ -98,6 +87,56 @@ public class Clip {
                             });
         }
     }
+
+
+    /*
+     * Update the Info card.
+     * @param name String of the new name.
+     * @param diffText Integer of the new difficulty.
+     * @param diffColor Integer of the new difficulty color.
+     * @param type String of the new route type.
+     * @param isSitstart True if route has a sitstart.
+     * @param startHoldCount Integer of the number of start holds, between 0 and 2.
+     * @param isTopout True if route has a topout.
+     *
+    public boolean updateInfoCard(String name, String diffText, int diffColor, String type,
+                               boolean isSitstart, int startHoldCount, boolean isTopout,
+                               String notes) {
+        if (mInfoCardView != null) {
+            TextView nameTV = mInfoCardView.findViewById(R.id.name);
+            TextView diffTV = mInfoCardView.findViewById(R.id.diff_number);
+            TextView typeTV = mInfoCardView.findViewById(R.id.type);
+            TextView sitstartIC = mInfoCardView.findViewById(R.id.sitstart);
+            TextView holdcountIC = mInfoCardView.findViewById(R.id.start_hold_count);
+            TextView topoutIC = mInfoCardView.findViewById(R.id.topout);
+            TextView notesTV = mInfoCardView.findViewById(R.id.notes);
+
+            if (nameTV == null || diffTV == null || typeTV == null || sitstartIC == null
+                    || holdcountIC == null || topoutIC == null || notesTV == null)  {
+                return false;
+            }
+
+            nameTV.setText(name);
+            diffTV.setText(diffText);
+            diffTV.setTextColor(diffColor);
+            typeTV.setText(type);
+
+            if (isSitstart) sitstartIC.setVisibility(View.VISIBLE);
+            else sitstartIC.setVisibility(View.INVISIBLE);
+
+            if (startHoldCount == 2) holdcountIC.setVisibility(View.VISIBLE);
+            if (startHoldCount == 1) holdcountIC.setVisibility(View.VISIBLE);
+            else holdcountIC.setVisibility(View.INVISIBLE);
+
+            if (isTopout) topoutIC.setVisibility(View.VISIBLE);
+            else topoutIC.setVisibility(View.INVISIBLE);
+
+            notesTV.setText(notes);
+
+            return true;
+        }
+        return false;
+    }*/
 
 
     /**
@@ -132,11 +171,33 @@ public class Clip {
     }
 
 
+    public View getInfoCardView() {
+        return mInfoCardView;
+    }
+
+
+    /**
+     * Get Clip's Node.
+     * @return TransformableNode of the clip.
+     */
+    private TransformableNode getClipNode() {
+        return mClip;
+    }
+
+
+    /**
+     * Check if Clip is currently selected.
+     * @return True if selected.
+     */
     public boolean isClipSelected() {
         return mClip.isSelected();
     }
 
 
+    /**
+     * Check if Clip is currently transforming.
+     * @return True if transforming.
+     */
     public boolean isClipTransforming() {
         return mClip.isTransforming();
     }

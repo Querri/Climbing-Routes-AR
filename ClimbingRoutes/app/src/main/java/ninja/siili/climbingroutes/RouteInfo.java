@@ -1,7 +1,14 @@
 package ninja.siili.climbingroutes;
 
 import android.content.Context;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.RadioButton;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 /** Stores information about the route. */
 public class RouteInfo {
@@ -31,32 +38,18 @@ public class RouteInfo {
         mIsBoulder = true;
         mIsSport = false;
         mIsTrad = false;
-        mStartHoldCount = 0;
+        mStartHoldCount = 1;
         mIsSitstart = false;
         mIsTopOut = false;
         mNotes = "";
         setDifficultyColor();
     }
 
-
-    /**
-     * Set and get Route name.
-     * @param newName String for new name.
-     */
-    public void setName(String newName) { mName = newName; }
-    public String getName() { return mName; }
-
-
-    /**
-     * Set and get Route difficulty.
-     * @param newDiff Integer for new difficulty.
-     */
-    public void setDifficulty(int newDiff) {
-        mDiff = newDiff;
-        setDifficultyColor();
+    private String getName() {
+        if (mName.equals("")) return "Nameless Route";
+        else return mName;
     }
 
-    public int getDifficulty() { return mDiff; }
 
 
     /**
@@ -74,58 +67,24 @@ public class RouteInfo {
         }
     }
 
-    public int getDifficultyColor() { return mDiffColor; }
-
-
-    /**
-     * Set and get route types.
-     * @param value Boolean value.
-     */
-    public void setIsBoulder(boolean value) { mIsBoulder = value; }
-    public boolean getIsBoulder() { return mIsBoulder; }
-
-    public void setIsSport(boolean value) { mIsSport = value; }
-    public boolean getIsSport() { return mIsSport; }
-
-    public void setIsTrad(boolean value) { mIsTrad = value; }
-    public boolean getIsTrad() { return mIsTrad; }
+    public int getDifficultyColor() {
+        return mDiffColor;
+    }
 
 
     /**
      * Get Route type as a String.
      * @return String value of Route type.
      */
-    public String getTypeString() {
+    private String getTypeString() {
         if (mIsBoulder) {
-            return mContext.getString(R.string.route_type_boulder);
+            return mContext.getString(R.string.boulder);
         } else if (mIsSport) {
-            return mContext.getString(R.string.route_type_sport);
+            return mContext.getString(R.string.sport);
         } else if (mIsTrad) {
-            return mContext.getString(R.string.route_type_trad);
+            return mContext.getString(R.string.trad);
         } else return "";
     }
-
-
-    /**
-     * Get and set sitstart, one/two hold start and topout.
-     * @param value Boolean value.
-     */
-    public void setIsSitstart(boolean value) { mIsSitstart = value; }
-    public boolean getIsSitstart() { return mIsSitstart; }
-
-    public void setStartHoldCount(int value) { mStartHoldCount = value; }
-    public int getStartHoldCount() { return mStartHoldCount; }
-
-    public void setIsTopout(boolean value) { mIsTopOut = value; }
-    public boolean getIsTopout() { return mIsTopOut; }
-
-
-    /**
-     * Set and get notes.
-     * @param value String value of new notes.
-     */
-    public void setNotes(String value) { mNotes = value; }
-    public String getNotes() { return mNotes; }
 
 
     /**
@@ -149,7 +108,7 @@ public class RouteInfo {
      * Get the number + letter combination that is the grade of the route (ex. 6b).
      * @return String of the grade
      */
-    public String getDifficultyText() {
+    private String getDifficultyText() {
         int value = mDiff;
         String number;
         String letter = "";
@@ -206,5 +165,121 @@ public class RouteInfo {
          */
 
         return number + letter;
+    }
+
+
+    /**
+     * Update all values in RouteInfo.
+     * @param infoView baabaa
+     * @return True if succeeded.
+     */
+    public boolean updateAll(View infoView) {
+        ArrayList<View> views = findAllViews(infoView);
+
+        if (views != null && views.size() == 8) {
+            mName = ((TextView) views.get(0)).getText().toString();
+            mDiff = ((SeekBar) views.get(1)).getProgress();
+            mIsBoulder = ((RadioButton) views.get(2)).isChecked();
+            mIsSport = ((RadioButton) views.get(3)).isChecked();
+            mIsTrad = ((RadioButton) views.get(4)).isChecked();
+            mIsSitstart = ((CheckBox) views.get(5)).isChecked();
+            mIsTopOut = ((CheckBox) views.get(6)).isChecked();
+            mStartHoldCount = 1;
+            mNotes = ((TextView) views.get(7)).getText().toString();
+
+            setDifficultyColor();
+            return true;
+        }
+        Toast.makeText(mContext, "Failed to update RouteInfo.", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+
+    /**
+     * Update the info view with RouteInfo's values.
+     * @param infoView the infoview.
+     */
+    public void updateInfoView(View infoView) {
+        ArrayList<View> views = findAllViews(infoView);
+
+        if (views != null && views.size() == 8) {
+            ((TextView) views.get(0)).setText(mName);
+            ((SeekBar) views.get(1)).setProgress(mDiff);
+            ((RadioButton) views.get(2)).setChecked(mIsBoulder);
+            ((RadioButton) views.get(3)).setChecked(mIsSport);
+            ((RadioButton) views.get(4)).setChecked(mIsTrad);
+            ((CheckBox) views.get(5)).setChecked(mIsSitstart);
+            ((CheckBox) views.get(6)).setChecked(mIsTopOut);
+            ((TextView) views.get(7)).setText(mNotes);
+        }
+        Toast.makeText(mContext, "Failed to update info view.", Toast.LENGTH_SHORT).show();
+    }
+
+
+    /**
+     * Update the info card with RouteInfo's values.
+     * @param infoCardView the info card.
+     */
+    public void updateInfoCardView(View infoCardView) {
+        if (infoCardView != null) {
+            TextView nameTV = infoCardView.findViewById(R.id.name);
+            TextView diffTV = infoCardView.findViewById(R.id.diff_number);
+            TextView typeTV = infoCardView.findViewById(R.id.type);
+            TextView sitstartIC = infoCardView.findViewById(R.id.sitstart);
+            TextView holdcountIC = infoCardView.findViewById(R.id.start_hold_count);
+            TextView topoutIC = infoCardView.findViewById(R.id.topout);
+            TextView notesTV = infoCardView.findViewById(R.id.notes);
+
+            if (nameTV == null || diffTV == null || typeTV == null || sitstartIC == null
+                    || holdcountIC == null || topoutIC == null || notesTV == null)  {
+                Toast.makeText(mContext, "Null field in info card.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            nameTV.setText(getName());
+            diffTV.setText(getDifficultyText());
+            diffTV.setTextColor(mDiffColor);
+            typeTV.setText(getTypeString());
+
+            if (mIsSitstart) sitstartIC.setVisibility(View.VISIBLE);
+            else sitstartIC.setVisibility(View.INVISIBLE);
+
+            if (mStartHoldCount == 2) holdcountIC.setVisibility(View.VISIBLE);
+            if (mStartHoldCount == 1) holdcountIC.setVisibility(View.VISIBLE);
+            else holdcountIC.setVisibility(View.INVISIBLE);
+
+            if (mIsTopOut) topoutIC.setVisibility(View.VISIBLE);
+            else topoutIC.setVisibility(View.INVISIBLE);
+
+            notesTV.setText(mNotes);
+        } else {
+            Toast.makeText(mContext, "Null info card.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    /**
+     * Find all Views from the info view.
+     * @param infoView the info view.
+     * @return ListArray of the views.
+     */
+    private ArrayList<View> findAllViews(View infoView) {
+        ArrayList<View> views = new ArrayList<>();
+        
+        views.add(infoView.findViewById(R.id.name));
+        views.add(infoView.findViewById(R.id.diff_seekbar));
+        views.add(infoView.findViewById(R.id.boulder));
+        views.add(infoView.findViewById(R.id.sport));
+        views.add(infoView.findViewById(R.id.trad));
+        views.add(infoView.findViewById(R.id.sitstart));
+        views.add(infoView.findViewById(R.id.topout));
+        views.add(infoView.findViewById(R.id.notes));
+
+        for (View view : views) {
+            if (view == null) {
+                return null;
+            }
+        }
+        return views;
     }
 }

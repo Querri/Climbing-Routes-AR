@@ -87,21 +87,21 @@
             android:id="@+id/boulder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/route_type_boulder"
+            android:text="@string/boulder"
             android:textColor="@color/white" />
 
         <RadioButton
             android:id="@+id/sport"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/route_type_sport"
+            android:text="@string/sport"
             android:textColor="@color/white" />
 
         <RadioButton
             android:id="@+id/trad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/route_type_trad"
+            android:text="@string/trad"
             android:textColor="@color/white" />
     </RadioGroup>
 
@@ -124,7 +124,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:text="@string/route_start_assis"
+        android:text="@string/sitstart"
         android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/starting" />
@@ -136,7 +136,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:text="@string/route_topout"
+        android:text="@string/topout"
         android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/sitstart" />
@@ -151,7 +151,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:hint="@string/route_notes"
+        android:hint="@string/notes"
         android:inputType="textMultiLine"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"

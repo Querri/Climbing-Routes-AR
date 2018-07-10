@@ -1,9 +1,9 @@
 package ninja.siili.climbingroutes;
 
 import android.content.Context;
+import android.view.View;
 
 import com.google.ar.core.HitResult;
-import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.ux.TransformationSystem;
 
 import java.util.ArrayList;
@@ -34,10 +34,7 @@ public class Route {
         mContext = context;
         mTransformationSystem = transformationSystem;
         mRenderableHelper = renderableHelper;
-
         mRouteInfo = new RouteInfo(context);
-
-        // TODO create object for storing route info
     }
 
 
@@ -66,11 +63,11 @@ public class Route {
         if (mClips.get(mSelectedClipPosition).isClipSelected()) {
             // Selected Clip hasn't changed, move lines adjacent to it if the Clip is transforming.
             if (mClips.get(mSelectedClipPosition).isClipTransforming()) {
-                // Move line below Clip.
+                // Move the line below Clip.
                 if (mSelectedClipPosition != 0) {
                     mClips.get(mSelectedClipPosition).moveLine(mClips.get(mSelectedClipPosition - 1));
                 }
-                // Move line above Clip.
+                // Move the line above Clip.
                 if (mSelectedClipPosition != mClips.size()-1) {
                     mClips.get(mSelectedClipPosition + 1).moveLine(mClips.get(mSelectedClipPosition));
                 }
@@ -99,35 +96,30 @@ public class Route {
 
 
     /**
-     * Update Route info.
-     * @param name String of new name.
-     * @param difficulty Integer of new difficulty.
-     * @param isBoulder True if Route's type is boulder.
-     * @param isSport True if Route's type is sport.
-     * @param isTrad True if Route's type is trad.
-     * @param isSitstart True if Route has a sit start.
-     * @param isTopOut True if Route has a top out.
-     * @param startHoldCount Integer of Route's start hold count, from 0 to 2.
-     * @param notes String of additional notes about the Route.
+     * Update RouteInfo with new values made with info view.
+     * @param infoView View.
      */
-    public void updateRouteInfo(String name, int difficulty,
-                                boolean isBoulder, boolean isSport, boolean isTrad,
-                                boolean isSitstart, boolean isTopOut, int startHoldCount,
-                                String notes) {
-        mRouteInfo.setName(name);
-        mRouteInfo.setDifficulty(difficulty);
-        mRouteInfo.setIsBoulder(isBoulder);
-        mRouteInfo.setIsSport(isSport);
-        mRouteInfo.setIsTrad(isTrad);
-        mRouteInfo.setIsSitstart(isSitstart);
-        mRouteInfo.setIsTopout(isTopOut);
-        mRouteInfo.setStartHoldCount(startHoldCount);
-        mRouteInfo.setNotes(notes);
+    public void updateRouteInfo(View infoView) {
+        if (mRouteInfo.updateAll(infoView)) {
+            changeRouteColor();
+            updateInfoCard();
+        }
+    }
 
-        // TODO check this
-        boolean valuesFine = mRouteInfo.checkValuesAreAllRight();
 
-        // TODO listener for this
-        changeRouteColor();
+    /**
+     * Update the info view with values in RouteInfo.
+     * @param infoView view.
+     */
+    public void updateInfoView(View infoView) {
+        mRouteInfo.updateInfoView(infoView);
+    }
+
+
+    /**
+     * Update the info card.
+     */
+    public void updateInfoCard() {
+        mRouteInfo.updateInfoCardView(mClips.get(0).getInfoCardView());
     }
 }

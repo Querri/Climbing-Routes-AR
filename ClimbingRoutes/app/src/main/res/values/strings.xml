@@ -5,12 +5,15 @@
     <string name="route_name">Name of the route</string>
     <string name="route_diff">Route difficulty</string>
     <string name="route_type">Route type</string>
-    <string name="route_type_boulder">Boulder</string>
-    <string name="route_type_sport">Sport</string>
-    <string name="route_type_trad">Traditional</string>
-    <string name="route_start_onehold">One hold</string>
-    <string name="route_start_twoholds">Two holds</string>
-    <string name="route_start_assis">Sitstart</string>
-    <string name="route_topout">Top out</string>
-    <string name="route_notes">Notes</string>
+    <string name="boulder">Boulder</string>
+    <string name="sport">Sport</string>
+    <string name="trad">Traditional</string>
+    <string name="onehold">One hold</string>
+    <string name="twoholds">Two holds</string>
+    <string name="sitstart">Sitstart</string>
+    <string name="topout">Top out</string>
+    <string name="notes">Notes</string>
+
+    <string name="nameless_route">Nameless route</string>
+    <string name="grade_6a">6a</string>
 </resources>

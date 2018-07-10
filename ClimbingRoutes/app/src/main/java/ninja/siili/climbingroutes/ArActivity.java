@@ -1,16 +1,11 @@
 package ninja.siili.climbingroutes;
 
 import android.net.Uri;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.google.ar.core.Frame;
@@ -41,7 +36,7 @@ public class ArActivity extends AppCompatActivity {
     private boolean editRouteMode = false;
 
 
-    private ConstraintLayout mInfoView;
+    private View mInfoView;
 
     private boolean hasFinishedLoading = false;
 
@@ -153,8 +148,12 @@ public class ArActivity extends AppCompatActivity {
                 }
         );
     }
-    
-    
+
+
+    /**
+     * User has tapped the screen.
+     * @param tap MotionEvent for the tap.
+     */
     private void onSingleTap(MotionEvent tap) {
         Frame frame = arFragment.getArSceneView().getArFrame();
         if (frame != null) {
@@ -172,6 +171,11 @@ public class ArActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Try to place a new Route.
+     * @param tap MotionEvent fot the tap.
+     * @param frame Current frame.
+     */
     private boolean tryPlaceNewRoute(MotionEvent tap, Frame frame) {
         if (tap != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING) {
             Toast.makeText(this, "try place route", Toast.LENGTH_SHORT).show();
@@ -189,6 +193,11 @@ public class ArActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Try to place a new clip to active Route.
+     * @param tap MotionEvent fot the tap.
+     * @param frame Current frame.
+     */
     private void tryPlaceClip(MotionEvent tap, Frame frame) {
         if (tap != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING) {
             Toast.makeText(this, "try place clip", Toast.LENGTH_SHORT).show();
@@ -222,45 +231,17 @@ public class ArActivity extends AppCompatActivity {
 
 
     /**
-     *
-     */
-    private void saveRouteInfo() {
-
-    }
-
-
-    /**
      * Toggle Info View's visibility.
      * @param button FAB 1
      */
     public void onClickToggleInfoView(View button) {
         if (mActiveRoute != null) {
             if (mInfoView.getVisibility() == View.GONE) {
+                mActiveRoute.updateInfoView(mInfoView);
                 mInfoView.setVisibility(View.VISIBLE);
             } else {
                 mInfoView.setVisibility(View.GONE);
-                saveRouteInfo();
-
-                EditText name = mInfoView.findViewById(R.id.name);
-                SeekBar diff = mInfoView.findViewById(R.id.diff_seekbar);
-                RadioButton boulder = mInfoView.findViewById(R.id.boulder);
-                RadioButton sport = mInfoView.findViewById(R.id.sport);
-                RadioButton trad = mInfoView.findViewById(R.id.trad);
-                CheckBox sitstart = mInfoView.findViewById(R.id.sitstart);
-                CheckBox topout = mInfoView.findViewById(R.id.topout);
-                EditText notes = mInfoView.findViewById(R.id.notes);
-
-                mActiveRoute.updateRouteInfo(
-                        name.getText().toString(),
-                        diff.getProgress(),
-                        boulder.isChecked(),
-                        sport.isChecked(),
-                        trad.isChecked(),
-                        sitstart.isChecked(),
-                        topout.isChecked(),
-                        0,
-                        notes.getText().toString()
-                        );
+                mActiveRoute.updateRouteInfo(mInfoView);
             }
         }
     }
