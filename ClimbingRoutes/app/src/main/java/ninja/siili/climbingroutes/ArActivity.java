@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.ar.core.Frame;
@@ -18,6 +19,7 @@ import com.google.ar.sceneform.Scene;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -32,8 +34,9 @@ public class ArActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
 
     private Route mActiveRoute;
-    private boolean addRouteMode = true;
-    private boolean editRouteMode = false;
+    private ArrayList<Route> mRoutes;
+    private boolean editMode = false;
+    private TextView modeTextView;
 
 
     private View mInfoView;
@@ -46,6 +49,9 @@ public class ArActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ar);
         mInfoView = findViewById(R.id.include);
         mInfoView.setVisibility(View.GONE);
+        modeTextView = findViewById(R.id.tv_mode);
+
+        mRoutes = new ArrayList<>();
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
         mScene = arFragment.getArSceneView().getScene();
@@ -112,7 +118,7 @@ public class ArActivity extends AppCompatActivity {
                         return;
                     }
 
-                    if (mActiveRoute != null && editRouteMode) {
+                    if (mActiveRoute != null && editMode) {
                         // TODO do this only when there is touch event?
                         mActiveRoute.moveLinesIfNeeded();
                     }
@@ -140,11 +146,7 @@ public class ArActivity extends AppCompatActivity {
         // Touch listener
         arFragment.getArSceneView().getScene().setOnTouchListener(
                 (HitTestResult hitTestResult, MotionEvent event) -> {
-                    if (addRouteMode || editRouteMode) {
-                        return gestureDetector.onTouchEvent(event);
-                    }
-
-                    return false;
+                    return gestureDetector.onTouchEvent(event);
                 }
         );
     }
@@ -157,14 +159,20 @@ public class ArActivity extends AppCompatActivity {
     private void onSingleTap(MotionEvent tap) {
         Frame frame = arFragment.getArSceneView().getArFrame();
         if (frame != null) {
-            if (mActiveRoute == null) {
+            if (mActiveRoute == null && editMode) {
                 if (tryPlaceNewRoute(tap, frame)) {
-                    addRouteMode = false;
-                    editRouteMode = true;
+                    selectRoute(mRoutes.get(mRoutes.size() - 1));
+                    editingRoute(editMode);
+                } else {
+                    Toast.makeText(this, "nope", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                if (editRouteMode) {
-                    tryPlaceClip(tap, frame);
+                if (editMode) {
+                    if (!tryPlaceClip(tap, frame)) {
+                        Toast.makeText(this, "nope", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    selectRoute(null);
                 }
             }
         }
@@ -178,13 +186,12 @@ public class ArActivity extends AppCompatActivity {
      */
     private boolean tryPlaceNewRoute(MotionEvent tap, Frame frame) {
         if (tap != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING) {
-            Toast.makeText(this, "try place route", Toast.LENGTH_SHORT).show();
             for (HitResult hit : frame.hitTest(tap)) {
                 Trackable trackable = hit.getTrackable();
                 if (trackable instanceof Point) {
                     Route newRoute = new Route(this, arFragment.getTransformationSystem(), mRenderableHelper);
                     newRoute.addClip(hit);
-                    selectRoute(newRoute);
+                    mRoutes.add(newRoute);
                     return true;
                 }
             }
@@ -198,16 +205,17 @@ public class ArActivity extends AppCompatActivity {
      * @param tap MotionEvent fot the tap.
      * @param frame Current frame.
      */
-    private void tryPlaceClip(MotionEvent tap, Frame frame) {
+    private boolean tryPlaceClip(MotionEvent tap, Frame frame) {
         if (tap != null && frame.getCamera().getTrackingState() == TrackingState.TRACKING) {
-            Toast.makeText(this, "try place clip", Toast.LENGTH_SHORT).show();
             for (HitResult hit : frame.hitTest(tap)) {
                 Trackable trackable = hit.getTrackable();
                 if (trackable instanceof Point) {
                     mActiveRoute.addClip(hit);
+                    return true;
                 }
             }
         }
+        return false;
     }
 
 
@@ -217,22 +225,76 @@ public class ArActivity extends AppCompatActivity {
      */
     private void selectRoute(Route route) {
         mActiveRoute = route;
-        editRouteMode = true;
+        updateModeText();
     }
 
 
     /**
-     * Clear route selection.
+     * Switch mode to adding route or exit it.
+     * @param startAdd True if starting adding, false if calcelling or done.
      */
-    private void clearRouteSelection() {
-        mActiveRoute = null;
-        editRouteMode = false;
+    private void addingRoute(boolean startAdd) {
+        editMode = startAdd;
+        updateModeText();
     }
 
 
     /**
-     * Toggle Info View's visibility.
-     * @param button FAB 1
+     * Switch mode to editing route or exit it.
+     * @param startEdit True if starting edit, false if cancelling or done.
+     */
+    private void editingRoute(boolean startEdit) {
+        editMode = startEdit;
+
+        if (!startEdit) {
+            // TODO save
+            Toast.makeText(this, "Route saved", Toast.LENGTH_SHORT).show();
+        }
+
+        updateModeText();
+    }
+
+
+    /**
+     * Update the text informing what mode is on.
+     */
+    private void updateModeText() {
+        if (mActiveRoute == null) {
+            if (editMode) {
+                modeTextView.setText(this.getString(R.string.add_route));
+                // TODO change icon to cancel
+            } else {
+                modeTextView.setText("");
+                // TODO change icon to add
+            }
+        } else {
+            if (editMode) {
+                modeTextView.setText(this.getString(R.string.edit_route));
+                // TODO change icon to save
+            } else {
+                modeTextView.setText(this.getString(R.string.route_active));
+                // TODO change icon to edit
+            }
+        }
+    }
+
+
+    /**
+     * FAB button for changing mode.
+     * @param button FAB button
+     */
+    public void onClickChangeMode(View button) {
+        if (mActiveRoute == null) {
+            addingRoute(!editMode);
+        } else {
+            editingRoute(!editMode);
+        }
+    }
+
+
+    /**
+     * FAB button for toggling Info View's visibility.
+     * @param button FAB button
      */
     public void onClickToggleInfoView(View button) {
         if (mActiveRoute != null) {
@@ -244,15 +306,6 @@ public class ArActivity extends AppCompatActivity {
                 mActiveRoute.updateRouteInfo(mInfoView);
             }
         }
-    }
-
-
-    /**
-     * FAB button for something.
-     * @param button FAB 2
-     */
-    public void onClickMove(View button) {
-        // TODO do something else with this FAB
     }
 }
 

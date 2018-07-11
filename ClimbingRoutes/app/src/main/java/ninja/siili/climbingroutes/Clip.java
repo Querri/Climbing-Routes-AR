@@ -64,7 +64,6 @@ public class Clip {
      * Create info card ViewRenderable for the first Clip on Route.
      */
     private void createInfoCard() {
-        Toast.makeText(mRenderableHelper.getContext(), "make info card", Toast.LENGTH_SHORT).show();
         if (mInfoCard == null && mClip != null) {
             mInfoCard = new Node();
             mInfoCard.setParent(mClip);
@@ -87,56 +86,6 @@ public class Clip {
                             });
         }
     }
-
-
-    /*
-     * Update the Info card.
-     * @param name String of the new name.
-     * @param diffText Integer of the new difficulty.
-     * @param diffColor Integer of the new difficulty color.
-     * @param type String of the new route type.
-     * @param isSitstart True if route has a sitstart.
-     * @param startHoldCount Integer of the number of start holds, between 0 and 2.
-     * @param isTopout True if route has a topout.
-     *
-    public boolean updateInfoCard(String name, String diffText, int diffColor, String type,
-                               boolean isSitstart, int startHoldCount, boolean isTopout,
-                               String notes) {
-        if (mInfoCardView != null) {
-            TextView nameTV = mInfoCardView.findViewById(R.id.name);
-            TextView diffTV = mInfoCardView.findViewById(R.id.diff_number);
-            TextView typeTV = mInfoCardView.findViewById(R.id.type);
-            TextView sitstartIC = mInfoCardView.findViewById(R.id.sitstart);
-            TextView holdcountIC = mInfoCardView.findViewById(R.id.start_hold_count);
-            TextView topoutIC = mInfoCardView.findViewById(R.id.topout);
-            TextView notesTV = mInfoCardView.findViewById(R.id.notes);
-
-            if (nameTV == null || diffTV == null || typeTV == null || sitstartIC == null
-                    || holdcountIC == null || topoutIC == null || notesTV == null)  {
-                return false;
-            }
-
-            nameTV.setText(name);
-            diffTV.setText(diffText);
-            diffTV.setTextColor(diffColor);
-            typeTV.setText(type);
-
-            if (isSitstart) sitstartIC.setVisibility(View.VISIBLE);
-            else sitstartIC.setVisibility(View.INVISIBLE);
-
-            if (startHoldCount == 2) holdcountIC.setVisibility(View.VISIBLE);
-            if (startHoldCount == 1) holdcountIC.setVisibility(View.VISIBLE);
-            else holdcountIC.setVisibility(View.INVISIBLE);
-
-            if (isTopout) topoutIC.setVisibility(View.VISIBLE);
-            else topoutIC.setVisibility(View.INVISIBLE);
-
-            notesTV.setText(notes);
-
-            return true;
-        }
-        return false;
-    }*/
 
 
     /**
@@ -171,6 +120,10 @@ public class Clip {
     }
 
 
+    /**
+     * Get info card for updating.
+     * @return View of the info card.
+     */
     public View getInfoCardView() {
         return mInfoCardView;
     }

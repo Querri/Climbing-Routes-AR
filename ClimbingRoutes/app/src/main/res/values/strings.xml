@@ -16,4 +16,9 @@
 
     <string name="nameless_route">Nameless route</string>
     <string name="grade_6a">6a</string>
+
+    <!-- Modes -->
+    <string name="add_route">Add new route.</string>
+    <string name="edit_route">Edit route.</string>
+    <string name="route_active">A route is active.</string>
 </resources>

@@ -15,6 +15,19 @@
         android:layout_height="match_parent" />
 
 
+    <!-- shows what mode is on -->
+    <TextView
+        android:id="@+id/tv_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/fab_change_mode"
+        app:layout_constraintTop_toTopOf="@+id/fab_change_mode"
+        app:layout_constraintBottom_toBottomOf="@id/fab_change_mode"/>
+
+
     <!-- info view -->
     <include
         android:id="@+id/include"
@@ -36,18 +49,18 @@
         android:layout_marginBottom="10dp"
         android:onClick="onClickToggleInfoView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/fab2"/>
+        app:layout_constraintBottom_toTopOf="@id/fab_change_mode"/>
 
 
     <!-- FAB 2 -->
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab2"
+        android:id="@+id/fab_change_mode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:onClick="onClickMove"
+        android:onClick="onClickChangeMode"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
