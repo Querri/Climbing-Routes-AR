@@ -63,6 +63,7 @@ public class Route {
         if (mClips.get(mSelectedClipPosition).isClipSelected()) {
             // Selected Clip hasn't changed, move lines adjacent to it if the Clip is transforming.
             if (mClips.get(mSelectedClipPosition).isClipTransforming()) {
+
                 // Move the line below Clip.
                 if (mSelectedClipPosition != 0) {
                     mClips.get(mSelectedClipPosition).moveLine(mClips.get(mSelectedClipPosition - 1));
@@ -121,5 +122,16 @@ public class Route {
      */
     public void updateInfoCard() {
         mRouteInfo.updateInfoCardView(mClips.get(0).getInfoCardView());
+    }
+
+
+    /**
+     * Go through all clips and enable/disable transforming.
+     * @param enable True if enable transforming, false if disable.
+     */
+    public void enableClipTransforming(boolean enable) {
+        for (Clip clip : mClips) {
+            clip.enableTransforming(enable);
+        }
     }
 }

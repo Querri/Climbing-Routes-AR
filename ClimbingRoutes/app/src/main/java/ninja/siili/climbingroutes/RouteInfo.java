@@ -201,6 +201,7 @@ public class RouteInfo {
      */
     public void updateInfoView(View infoView) {
         ArrayList<View> views = findAllViews(infoView);
+        // TODO colored textview and listener for difficulty
 
         if (views != null && views.size() == 8) {
             ((TextView) views.get(0)).setText(mName);

@@ -8,6 +8,7 @@ import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.Node;
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.TransformableNode;
 import com.google.ar.sceneform.ux.TransformationSystem;
@@ -20,7 +21,8 @@ public class Clip {
     private RenderableHelper mRenderableHelper;
 
     private AnchorNode mAnchor;
-    private TransformableNode mClip;
+    private TransformableNode mTransformableNode;
+    private Node mStaticNode;
     private Node mLine;
     private Node mInfoCard;
     private View mInfoCardView;
@@ -43,13 +45,16 @@ public class Clip {
         mAnchor.setParent(mRenderableHelper.getScene());
 
         // Create a transformable node and add it to the anchor.
-        mClip = new TransformableNode(transformationSystem);
-        mClip.setParent(mAnchor);
-        mClip.setRenderable(mRenderableHelper.getColoredClipRenderable(color));
-        mClip.select();
+        mTransformableNode = new TransformableNode(transformationSystem);
+        mTransformableNode.setParent(mAnchor);
+        mTransformableNode.setRenderable(mRenderableHelper.getColoredClipRenderable(color));
+        mTransformableNode.select();
+        mTransformableNode.getScaleController().setMinScale(0.1f);
+        mTransformableNode.getScaleController().setMaxScale(0.3f);
 
-        mClip.getScaleController().setMinScale(0.1f);
-        mClip.getScaleController().setMaxScale(0.3f);
+        // Create a static node and add it to the anchor.
+        mStaticNode = new Node();
+        mStaticNode.setParent(mAnchor);
 
         // If no previous clip, create info card instead of a line.
         if (previousClip == null) {
@@ -64,9 +69,9 @@ public class Clip {
      * Create info card ViewRenderable for the first Clip on Route.
      */
     private void createInfoCard() {
-        if (mInfoCard == null && mClip != null) {
+        if (mInfoCard == null && mTransformableNode != null) {
             mInfoCard = new Node();
-            mInfoCard.setParent(mClip);
+            mInfoCard.setParent(mTransformableNode);
             mInfoCard.setLocalPosition(new Vector3(0.0f, 1.5f, 0.0f));
             mInfoCard.setLocalScale(new Vector3(4.0f, 4.0f, 4.0f));
             mInfoCard.setWorldRotation(mRenderableHelper.getScene().getCamera().getWorldRotation());
@@ -106,17 +111,95 @@ public class Clip {
      * @param previousClip Previous Clip in Route.
      */
     public void moveLine(Clip previousClip) {
-        if (mLine != null && mClip != null && previousClip != null ) {
+        if (mLine != null && mTransformableNode != null && previousClip != null ) {
             Vector3 up = new Vector3(0.0f, 1.0f, 0.0f);
-            Vector3 directionVector = getDirectionVector(previousClip.getClipNode(), mClip);
+            Vector3 worldPosPrev = new Vector3(previousClip.getClipNode().getWorldPosition());
+            Vector3 worldPosThis = new Vector3(mTransformableNode.getWorldPosition());
+
+            Vector3 directionVector =  new Vector3(
+                    worldPosThis.x - worldPosPrev.x,
+                    worldPosThis.y - worldPosPrev.y,
+                    worldPosThis.z - worldPosPrev.z);
 
             float distance = directionVector.length();
             Quaternion rotation = Quaternion.lookRotation(directionVector, up);
 
             mLine.setWorldScale(new Vector3(0.03f, 0.03f, distance));
-            mLine.setWorldPosition(mClip.getWorldPosition());
+            mLine.setWorldPosition(mTransformableNode.getWorldPosition());
             mLine.setWorldRotation(rotation);
         }
+    }
+
+
+    /**
+     * Enable or disable clip's transforming.
+     * @param enable True if enable, false if disable.
+     */
+    public void enableTransforming(boolean enable) {
+        if (mTransformableNode != null && mStaticNode != null) {
+            mTransformableNode.setEnabled(enable);
+
+            if (enable) {
+                // Hide the static node.
+                mStaticNode.setRenderable(null);
+                if (mInfoCard != null) {
+                    // Change info card's parent, so that it moves with the transformable node.
+                    mInfoCard.setParent(mTransformableNode);
+                }
+
+            } else {
+                // Update and show the static node.
+                mStaticNode.setRenderable(mTransformableNode.getRenderable());
+                mStaticNode.setLocalScale(mTransformableNode.getLocalScale());
+                mStaticNode.setLocalRotation(mTransformableNode.getLocalRotation());
+                mStaticNode.setLocalPosition(mTransformableNode.getLocalPosition());
+                if (mInfoCard != null) {
+                    // Change info card's parent, so that it doesn't disable with trasformable node.
+                    mInfoCard.setParent(mStaticNode);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Change clip's and line's rederable's color.
+     * @param newColor Integer of the new color.
+     */
+    public void changeColor(int newColor) {
+        if (mTransformableNode != null) {
+            mTransformableNode.setRenderable(mRenderableHelper.getColoredClipRenderable(newColor));
+        }
+        if (mLine != null) {
+            mLine.setRenderable(mRenderableHelper.getColoredLineRenderable(newColor));
+        }
+    }
+
+
+    /**
+     * Check if Clip is currently selected.
+     * @return True if selected.
+     */
+    public boolean isClipSelected() {
+        return mTransformableNode.isSelected();
+    }
+
+
+    /**
+     * Check if Clip is currently transforming.
+     * @return True if transforming.
+     */
+    public boolean isClipTransforming() {
+        return mTransformableNode.isTransforming();
+    }
+
+
+    /**
+     * Get Clip's Node. Used to get a vector from a Clip to another.
+     * @return TransformableNode of the Clip.
+     */
+    private TransformableNode getClipNode() {
+        return mTransformableNode;
     }
 
 
@@ -126,63 +209,5 @@ public class Clip {
      */
     public View getInfoCardView() {
         return mInfoCardView;
-    }
-
-
-    /**
-     * Get Clip's Node.
-     * @return TransformableNode of the clip.
-     */
-    private TransformableNode getClipNode() {
-        return mClip;
-    }
-
-
-    /**
-     * Check if Clip is currently selected.
-     * @return True if selected.
-     */
-    public boolean isClipSelected() {
-        return mClip.isSelected();
-    }
-
-
-    /**
-     * Check if Clip is currently transforming.
-     * @return True if transforming.
-     */
-    public boolean isClipTransforming() {
-        return mClip.isTransforming();
-    }
-
-
-    /**
-     * Get a direction vector from previous Node to this Node.
-     * @param prevNode Previous Clip's Node.
-     * @param thisNode This Clip's Node.
-     * @return Vector3 from Node to Node.
-     */
-    private Vector3 getDirectionVector(Node prevNode, Node thisNode) {
-        Vector3 worldPosPrev = new Vector3(prevNode.getWorldPosition());
-        Vector3 worldPosThis = new Vector3(thisNode.getWorldPosition());
-
-        return new Vector3(
-                worldPosThis.x - worldPosPrev.x,
-                worldPosThis.y - worldPosPrev.y,
-                worldPosThis.z - worldPosPrev.z);
-    }
-
-
-    /**
-     * Change clip's and line's rederable's color.
-     * @param newColor Integer of the new color.
-     */
-    public void changeColor(int newColor) {
-        if (mClip != null) {
-            mClip.setRenderable(mRenderableHelper.getColoredClipRenderable(newColor));
-        }
-        if (mLine != null) {
-            mLine.setRenderable(mRenderableHelper.getColoredLineRenderable(newColor));
-        }
     }
 }

@@ -40,6 +40,7 @@ public class ArActivity extends AppCompatActivity {
 
 
     private View mInfoView;
+    private View mInfoViewFAB;
 
     private boolean hasFinishedLoading = false;
 
@@ -49,6 +50,8 @@ public class ArActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ar);
         mInfoView = findViewById(R.id.include);
         mInfoView.setVisibility(View.GONE);
+        mInfoViewFAB = findViewById(R.id.fab_info_view);
+        mInfoViewFAB.setVisibility(View.INVISIBLE);
         modeTextView = findViewById(R.id.tv_mode);
 
         mRoutes = new ArrayList<>();
@@ -244,14 +247,16 @@ public class ArActivity extends AppCompatActivity {
      * @param startEdit True if starting edit, false if cancelling or done.
      */
     private void editingRoute(boolean startEdit) {
+        mActiveRoute.enableClipTransforming(startEdit);
         editMode = startEdit;
-
-        if (!startEdit) {
-            // TODO save
-            Toast.makeText(this, "Route saved", Toast.LENGTH_SHORT).show();
-        }
-
         updateModeText();
+
+        // Show FAB for info view only when a route is in editing mode.
+        if (startEdit) {
+            mInfoViewFAB.setVisibility(View.VISIBLE);
+        } else {
+            mInfoViewFAB.setVisibility(View.INVISIBLE);
+        }
     }
 
 
@@ -281,7 +286,7 @@ public class ArActivity extends AppCompatActivity {
 
     /**
      * FAB button for changing mode.
-     * @param button FAB button
+     * @param button 2. FAB button
      */
     public void onClickChangeMode(View button) {
         if (mActiveRoute == null) {
@@ -294,7 +299,7 @@ public class ArActivity extends AppCompatActivity {
 
     /**
      * FAB button for toggling Info View's visibility.
-     * @param button FAB button
+     * @param button 1. FAB button
      */
     public void onClickToggleInfoView(View button) {
         if (mActiveRoute != null) {
