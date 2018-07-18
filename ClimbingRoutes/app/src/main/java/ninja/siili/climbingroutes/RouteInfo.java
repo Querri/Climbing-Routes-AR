@@ -195,13 +195,35 @@ public class RouteInfo {
     }
 
 
+    public void setupInfoView(View infoView) {
+        SeekBar diffSeekBar = infoView.findViewById(R.id.diff_seekbar);
+        TextView diffTextView = infoView.findViewById(R.id.diff_number);
+
+        // listener for difficulty seekbar to change difficulty textview
+        diffSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mDiff = progress;
+                setDifficultyColor();
+                diffTextView.setText(getDifficultyText());
+                diffTextView.setTextColor(getDifficultyColor());
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+    }
+
+
     /**
      * Update the info view with RouteInfo's values.
      * @param infoView the infoview.
      */
     public void updateInfoView(View infoView) {
         ArrayList<View> views = findAllViews(infoView);
-        // TODO colored textview and listener for difficulty
 
         if (views != null && views.size() == 8) {
             ((TextView) views.get(0)).setText(mName);

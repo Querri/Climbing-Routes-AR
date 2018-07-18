@@ -254,6 +254,7 @@ public class ArActivity extends AppCompatActivity {
         // Show FAB for info view only when a route is in editing mode.
         if (startEdit) {
             mInfoViewFAB.setVisibility(View.VISIBLE);
+            mActiveRoute.setupInfoView(mInfoView);
         } else {
             mInfoViewFAB.setVisibility(View.INVISIBLE);
         }

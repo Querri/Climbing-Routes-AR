@@ -35,6 +35,7 @@ public class Route {
         mTransformationSystem = transformationSystem;
         mRenderableHelper = renderableHelper;
         mRouteInfo = new RouteInfo(context);
+
     }
 
 
@@ -105,6 +106,11 @@ public class Route {
             changeRouteColor();
             updateInfoCard();
         }
+    }
+
+
+    public void setupInfoView(View infoView) {
+        mRouteInfo.setupInfoView(infoView);
     }
 
 
