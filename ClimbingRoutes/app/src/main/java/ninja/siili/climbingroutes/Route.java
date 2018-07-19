@@ -88,7 +88,7 @@ public class Route {
 
 
     /**
-     * Change the route's color.
+     * Change every clip's color.
      */
     public void changeRouteColor() {
         for (Clip clip : mClips) {
@@ -98,7 +98,7 @@ public class Route {
 
 
     /**
-     * Update RouteInfo with new values made with info view.
+     * Pass infoView to RouteInfo for updating RouteInfo's values.
      * @param infoView View.
      */
     public void updateRouteInfo(View infoView) {
@@ -109,14 +109,18 @@ public class Route {
     }
 
 
+    /**
+     * Pass infoView to RouteInfo for setup.
+     * @param infoView View of the infoView.
+     */
     public void setupInfoView(View infoView) {
         mRouteInfo.setupInfoView(infoView);
     }
 
 
     /**
-     * Update the info view with values in RouteInfo.
-     * @param infoView view.
+     * Pass infoView to RouteInfo for updating..
+     * @param infoView View of the infoView.
      */
     public void updateInfoView(View infoView) {
         mRouteInfo.updateInfoView(infoView);
@@ -132,7 +136,7 @@ public class Route {
 
 
     /**
-     * Go through all clips and enable/disable transforming.
+     * Go through all clips and enable/disable transforming. Used when toggling editmode.
      * @param enable True if enable transforming, false if disable.
      */
     public void enableClipTransforming(boolean enable) {

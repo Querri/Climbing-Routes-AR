@@ -57,6 +57,8 @@ public class ArActivity extends AppCompatActivity {
         mRoutes = new ArrayList<>();
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
+        arFragment.getPlaneDiscoveryController().hide();
+        arFragment.getPlaneDiscoveryController().setInstructionView(null);
         mScene = arFragment.getArSceneView().getScene();
 
         // Build all the models.
@@ -127,6 +129,7 @@ public class ArActivity extends AppCompatActivity {
                     }
 
                     arFragment.onUpdate(frameTime);
+                    // TODO hide loading icon
                 });
 
 
@@ -179,6 +182,12 @@ public class ArActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        // TODO disable fullscreen
     }
 
 

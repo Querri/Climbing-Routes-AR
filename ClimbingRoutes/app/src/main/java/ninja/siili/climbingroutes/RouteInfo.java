@@ -34,7 +34,6 @@ public class RouteInfo {
     public RouteInfo(Context context) {
         mContext = context;
         mName = "";
-        mDiff = 10;
         mIsBoulder = true;
         mIsSport = false;
         mIsTrad = false;
@@ -42,7 +41,7 @@ public class RouteInfo {
         mIsSitstart = false;
         mIsTopOut = false;
         mNotes = "";
-        setDifficultyColor();
+        setDifficulty(10);
     }
 
     private String getName() {
@@ -55,7 +54,8 @@ public class RouteInfo {
     /**
      * Set and get difficulty color based on difficulty.
      */
-    private void setDifficultyColor() {
+    private void setDifficulty(int diff) {
+        mDiff = diff;
         if (mDiff < 9) {
             mDiffColor = mContext.getColor(R.color.green);
         } else if (mDiff < 18) {
@@ -178,7 +178,6 @@ public class RouteInfo {
 
         if (views != null && views.size() == 8) {
             mName = ((TextView) views.get(0)).getText().toString();
-            mDiff = ((SeekBar) views.get(1)).getProgress();
             mIsBoulder = ((RadioButton) views.get(2)).isChecked();
             mIsSport = ((RadioButton) views.get(3)).isChecked();
             mIsTrad = ((RadioButton) views.get(4)).isChecked();
@@ -187,7 +186,7 @@ public class RouteInfo {
             mStartHoldCount = 1;
             mNotes = ((TextView) views.get(7)).getText().toString();
 
-            setDifficultyColor();
+            setDifficulty(((SeekBar) views.get(1)).getProgress());
             return true;
         }
         Toast.makeText(mContext, "Failed to update RouteInfo.", Toast.LENGTH_SHORT).show();
@@ -195,6 +194,10 @@ public class RouteInfo {
     }
 
 
+    /**
+     * Setup listener for difficulty seekbar in info view.
+     * @param infoView View of the info view.
+     */
     public void setupInfoView(View infoView) {
         SeekBar diffSeekBar = infoView.findViewById(R.id.diff_seekbar);
         TextView diffTextView = infoView.findViewById(R.id.diff_number);
@@ -203,8 +206,7 @@ public class RouteInfo {
         diffSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mDiff = progress;
-                setDifficultyColor();
+                setDifficulty(progress);
                 diffTextView.setText(getDifficultyText());
                 diffTextView.setTextColor(getDifficultyColor());
             }
