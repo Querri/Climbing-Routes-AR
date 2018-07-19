@@ -47,9 +47,11 @@
         android:layout_gravity="end|bottom"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
+        android:src="@drawable/ic_baseline_info_24px"
         android:onClick="onClickToggleInfoView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/fab_change_mode"/>
+        <!-- TODO better info icon -->
 
 
     <!-- FAB 2 -->
@@ -60,6 +62,7 @@
         android:layout_gravity="end|bottom"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_baseline_add_24px"
         android:onClick="onClickChangeMode"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

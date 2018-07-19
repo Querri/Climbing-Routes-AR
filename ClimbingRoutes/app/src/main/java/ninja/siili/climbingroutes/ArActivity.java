@@ -1,11 +1,13 @@
 package ninja.siili.climbingroutes;
 
 import android.net.Uri;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +43,7 @@ public class ArActivity extends AppCompatActivity {
 
     private View mInfoView;
     private View mInfoViewFAB;
+    private FloatingActionButton mChangeModeFAB;
 
     private boolean hasFinishedLoading = false;
 
@@ -52,6 +55,7 @@ public class ArActivity extends AppCompatActivity {
         mInfoView.setVisibility(View.GONE);
         mInfoViewFAB = findViewById(R.id.fab_info_view);
         mInfoViewFAB.setVisibility(View.INVISIBLE);
+        mChangeModeFAB = findViewById(R.id.fab_change_mode);
         modeTextView = findViewById(R.id.tv_mode);
 
         mRoutes = new ArrayList<>();
@@ -129,7 +133,6 @@ public class ArActivity extends AppCompatActivity {
                     }
 
                     arFragment.onUpdate(frameTime);
-                    // TODO hide loading icon
                 });
 
 
@@ -277,18 +280,18 @@ public class ArActivity extends AppCompatActivity {
         if (mActiveRoute == null) {
             if (editMode) {
                 modeTextView.setText(this.getString(R.string.add_route));
-                // TODO change icon to cancel
+                mChangeModeFAB.setImageResource(R.drawable.ic_baseline_clear_24px);
             } else {
                 modeTextView.setText("");
-                // TODO change icon to add
+                mChangeModeFAB.setImageResource(R.drawable.ic_baseline_add_24px);
             }
         } else {
             if (editMode) {
                 modeTextView.setText(this.getString(R.string.edit_route));
-                // TODO change icon to save
+                mChangeModeFAB.setImageResource(R.drawable.ic_baseline_save_24px);
             } else {
                 modeTextView.setText(this.getString(R.string.route_active));
-                // TODO change icon to edit
+                mChangeModeFAB.setImageResource(R.drawable.ic_baseline_edit_24px);
             }
         }
     }
